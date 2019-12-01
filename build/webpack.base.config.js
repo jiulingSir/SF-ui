@@ -1,6 +1,6 @@
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 module.exports = {
     entry: './example/main.js',
     output: {
@@ -9,50 +9,21 @@ module.exports = {
     module: {
         rules: [
             {
+              test: /\.vue$/,
+              loader: 'vue-loader',
+              options: {
+                compilerOptions: {
+                  preserveWhitespace: false
+                }
+              }
+            },
+            {
                 test: /\.js?$/,
                 use: 'babel-loader'
             },
             {
                 test: /\.css?$/,
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    'css-loader',
-                    {
-                        loader: 'postcss-loader',
-                        options: {
-                              plugins: () => [
-                                require('autoprefixer')({
-                                    browsers: ['last 2 version', '>1%', 'ios 7']
-                                })
-                            ]
-                        }
-                    }
-                ]
-            },
-            {
-                test: /\.less?$/,
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    'css-loader',
-                    'less-loader',
-                    {
-                        loader: 'postcss-loader',
-                        options: {
-                              plugins: () => [
-                                require('autoprefixer')({
-                                    browsers: ['last 2 version', '>1%', 'ios 7']
-                                })
-                            ]
-                        }
-                    },
-                    {
-                        loader: 'px2rem-loader',
-                        options: {
-                            remUnit: 75,
-                            remPrecission: 8
-                        }
-                    }
-                ]
+                loaders: ['style-loader', 'css-loader']
             },
             {
                 test: /\.(png|jpg|jpeg|gif)?$/,
@@ -77,6 +48,10 @@ module.exports = {
         ]
     },
     plugins: [
-        new HtmlWebpackPlugin()
+        new HtmlWebpackPlugin({
+            template: path.join(__dirname, `../example/index.html`),
+            filename: `index.html`,
+        }),
+        new VueLoaderPlugin()
     ]
 }
